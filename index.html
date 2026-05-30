@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>M&M</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='9' cy='21' r='1.5' fill='%2300d4ff'/><circle cx='18' cy='21' r='1.5' fill='%2300d4ff'/><path d='M2.5 3h2.2l2.6 12.3a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 1.95-1.6L21.5 7H6'/></svg>"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="pos-app">
+      <header class="pos-header">
+        <div class="pos-header__brand">
+          <span class="pos-header__icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"
+              />
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+              <path d="M2 7h20" />
+              <path
+                d="M22 7v3a2 2 0 0 1-2 2 2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"
+              />
+            </svg>
+          </span>
+          <h1 class="pos-header__title">M&M</h1>
+        </div>
+        <div class="pos-header__actions">
+          <p class="pos-header__tag">Fiyat Sözlüğü · Hızlı Kasa</p>
+          <button
+            type="button"
+            id="open-summary"
+            class="btn btn--secondary pos-header__btn"
+          >
+            Günün Özeti
+          </button>
+          <button
+            type="button"
+            id="open-past-days"
+            class="btn btn--secondary pos-header__btn"
+          >
+            Geçmiş Günler
+          </button>
+        </div>
+      </header>
+
+      <div class="pos-grid">
+        <section
+          class="pos-panel pos-panel--dict"
+          aria-labelledby="dict-heading"
+        >
+          <div class="card">
+            <h2 id="dict-heading" class="card__title">Fiyat Sözlüğü</h2>
+            <p class="card__hint">
+              Satıra tıklayarak sepete ekleyin. Düzenle ile kaydı güncelleyin.
+            </p>
+            <form class="form-row" id="fiyat-form">
+              <input type="hidden" id="fiyat-editing-id" value="" />
+              <label class="field field--grow">
+                <span class="field__label">Ürün Adı</span>
+                <input
+                  type="text"
+                  id="fiyat-urun"
+                  autocomplete="off"
+                  required
+                />
+              </label>
+              <label class="field">
+                <span class="field__label">Fiyat</span>
+                <input
+                  type="number"
+                  id="fiyat-fiyat"
+                  min="0"
+                  step="0.01"
+                  inputmode="decimal"
+                  required
+                />
+              </label>
+              <div class="form-actions">
+                <button type="submit" class="btn btn--primary" id="fiyat-submit">
+                  Ekle
+                </button>
+                <button
+                  type="button"
+                  class="btn btn--link"
+                  id="fiyat-iptal"
+                  hidden
+                >
+                  Düzenlemeyi iptal et
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card card--stretch">
+            <label class="field field--full field--no-margin">
+              <span class="field__label">Ara</span>
+              <input
+                type="search"
+                id="fiyat-ara"
+                class="input-search"
+                placeholder="Ürün adına göre filtrele..."
+                autocomplete="off"
+              />
+            </label>
+            <ul class="product-list" id="fiyat-liste" aria-live="polite"></ul>
+          </div>
+        </section>
+
+        <aside
+          class="pos-panel pos-panel--cart"
+          aria-labelledby="cart-heading"
+        >
+          <div class="card card--cart">
+            <h2 id="cart-heading" class="card__title">Hızlı Kasa</h2>
+            <p class="card__hint">Fiş bu oturum içindir; kaydedilmez.</p>
+
+            <div class="receipt-wrap">
+              <h3 class="card__subtitle">Fiş</h3>
+              <ul class="receipt" id="kasa-liste" aria-live="polite"></ul>
+            </div>
+
+            <form class="quick-add" id="kasa-hizli-form">
+              <span class="field__label">Hızlı Ekle</span>
+              <div class="quick-add__row">
+                <label class="field field--grow field--inline">
+                  <span class="visually-hidden">Tutar</span>
+                  <input
+                    type="number"
+                    id="kasa-hizli-fiyat"
+                    min="0"
+                    step="0.01"
+                    inputmode="decimal"
+                    placeholder="Tutar (₺)"
+                    aria-label="Hızlı ekle tutar"
+                  />
+                </label>
+                <button type="submit" class="btn btn--secondary">
+                  Hızlı Ekle
+                </button>
+              </div>
+            </form>
+
+            <div class="kasa-total">
+              <span class="kasa-total__label">Genel Toplam</span>
+              <div id="kasa-toplam" class="kasa-total__value" aria-live="polite">
+                0,00 ₺
+              </div>
+            </div>
+
+            <div class="kasa-actions">
+              <button type="button" class="btn btn--success" id="kasa-tamamla">
+                Satışı Tamamla
+              </button>
+              <button type="button" class="btn btn--ghost" id="kasa-temizle">
+                Sepeti Temizle
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div
+      id="summary-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="summary-title"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="modal__backdrop" data-close></div>
+      <div class="modal__panel" role="document">
+        <button
+          type="button"
+          class="modal__close"
+          id="summary-close"
+          aria-label="Kapat"
+          title="Kapat"
+        >
+          ×
+        </button>
+        <h2 id="summary-title" class="modal__eyebrow">Günün Özeti</h2>
+
+        <div class="modal__revenue">
+          <span class="modal__revenue-label">Günün Toplam Cirosu</span>
+          <span
+            id="summary-revenue"
+            class="modal__revenue-value"
+            aria-live="polite"
+          >
+            0,00 ₺
+          </span>
+        </div>
+
+        <h3 class="modal__subtitle">Satılan Ürünler</h3>
+        <ul class="modal__list" id="summary-list"></ul>
+
+        <div class="modal__footer">
+          <button
+            type="button"
+            class="btn btn--danger-solid"
+            id="summary-end-day"
+          >
+            Günü Kapat
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="past-days-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="past-days-title"
+      aria-hidden="true"
+      hidden
+    >
+      <div class="modal__backdrop" data-close></div>
+      <div
+        class="modal__panel modal__panel--wide modal__panel--past-days"
+        role="document"
+      >
+        <button
+          type="button"
+          class="modal__close"
+          id="past-days-close"
+          aria-label="Kapat"
+          title="Kapat"
+        >
+          ×
+        </button>
+        <h2 id="past-days-title" class="modal__eyebrow">Geçmiş Günler</h2>
+        <p class="modal__hint">
+          Bir güne tıklayarak o günkü satılan ürünleri görüntüleyin.
+        </p>
+
+        <div class="past-days-list-wrap">
+          <ul
+            class="past-days-list"
+            id="past-days-list"
+            aria-live="polite"
+          ></ul>
+        </div>
+
+        <div class="modal__footer">
+          <button
+            type="button"
+            class="btn btn--danger-solid"
+            id="past-days-clear"
+          >
+            Geçmişi Temizle
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
